@@ -1,15 +1,11 @@
+import AppProviders from './app/providers'
+import AppRouter from './app/router'
+
 function App() {
   return (
-    <div className="min-h-screen bg-gray-950 flex items-center justify-center">
-      <div className="text-center">
-        <h1 className="text-5xl font-bold text-white mb-4">
-          🚀 Nexora
-        </h1>
-        <p className="text-gray-400 text-xl">
-          Enterprise Dashboard — Building...
-        </p>
-      </div>
-    </div>
+    <AppProviders>
+      <AppRouter />
+    </AppProviders>
   )
 }
 
