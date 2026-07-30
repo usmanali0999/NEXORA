@@ -1,4 +1,5 @@
 import { create } from 'zustand'
+import { persist } from 'zustand/middleware'
 
 export type UserRole = 'admin' | 'manager' | 'analyst'
 
@@ -16,24 +17,31 @@ type AuthState = {
   logout: () => void
 }
 
-export const useAuthStore = create<AuthState>((set) => ({
-  user: null,
-  isAuthenticated: false,
-
-  login: (role) =>
-    set({
-      isAuthenticated: true,
-      user: {
-        id: 'usr_001',
-        name: 'Usman Ali',
-        email: 'usman@nexora.com',
-        role,
-      },
-    }),
-
-  logout: () =>
-    set({
+export const useAuthStore = create<AuthState>()(
+  persist(
+    (set) => ({
       user: null,
       isAuthenticated: false,
+
+      login: (role) =>
+        set({
+          isAuthenticated: true,
+          user: {
+            id: 'usr_001',
+            name: 'Usman Ali',
+            email: 'usman@nexora.com',
+            role,
+          },
+        }),
+
+      logout: () =>
+        set({
+          user: null,
+          isAuthenticated: false,
+        }),
     }),
-}))
+    {
+      name: 'nexora-auth',
+    }
+  )
+)

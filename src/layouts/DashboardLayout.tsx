@@ -1,19 +1,55 @@
 import { Link, Outlet, useLocation } from 'react-router-dom'
-import { BarChart3, LayoutDashboard, LogOut, Settings, Users } from 'lucide-react'
+import {
+  BarChart3,
+  LayoutDashboard,
+  LogOut,
+  Settings,
+  Users,
+} from 'lucide-react'
 import clsx from 'clsx'
-import { useAuthStore } from '../store/auth.store'
+import toast from 'react-hot-toast'
+import { useAuthStore, type UserRole } from '../store/auth.store'
 
 const navItems = [
-  { label: 'Dashboard', path: '/', icon: LayoutDashboard },
-  { label: 'Analytics', path: '/analytics', icon: BarChart3 },
-  { label: 'Users', path: '/users', icon: Users },
-  { label: 'Settings', path: '/settings', icon: Settings },
+  {
+    label: 'Dashboard',
+    path: '/',
+    icon: LayoutDashboard,
+    roles: ['admin', 'manager', 'analyst'] as UserRole[],
+  },
+  {
+    label: 'Analytics',
+    path: '/analytics',
+    icon: BarChart3,
+    roles: ['admin', 'manager', 'analyst'] as UserRole[],
+  },
+  {
+    label: 'Users',
+    path: '/users',
+    icon: Users,
+    roles: ['admin', 'manager'] as UserRole[],
+  },
+  {
+    label: 'Settings',
+    path: '/settings',
+    icon: Settings,
+    roles: ['admin'] as UserRole[],
+  },
 ]
 
 function DashboardLayout() {
   const location = useLocation()
   const user = useAuthStore((state) => state.user)
   const logout = useAuthStore((state) => state.logout)
+
+  const visibleNavItems = navItems.filter(
+    (item) => user && item.roles.includes(user.role)
+  )
+
+  const handleLogout = () => {
+    logout()
+    toast.success('Logged out successfully')
+  }
 
   return (
     <div className="min-h-screen bg-zinc-950 text-white">
@@ -27,9 +63,12 @@ function DashboardLayout() {
           </div>
 
           <nav className="space-y-2">
-            {navItems.map((item) => {
+            {visibleNavItems.map((item) => {
               const Icon = item.icon
-              const isActive = location.pathname === item.path
+              const isActive =
+                item.path === '/'
+                  ? location.pathname === '/'
+                  : location.pathname.startsWith(item.path)
 
               return (
                 <Link
@@ -68,7 +107,7 @@ function DashboardLayout() {
               </div>
 
               <button
-                onClick={logout}
+                onClick={handleLogout}
                 className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm text-zinc-200 transition hover:bg-white/10"
               >
                 <LogOut size={16} />

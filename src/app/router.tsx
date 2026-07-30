@@ -1,7 +1,9 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import DashboardLayout from '../layouts/DashboardLayout'
 import ProtectedRoute from '../routes/ProtectedRoute'
+import RoleGuard from '../routes/RoleGuard'
 import LoginPage from '../features/auth/LoginPage'
+import UnauthorizedPage from '../features/auth/UnauthorizedPage'
 import DashboardPage from '../features/dashboard/DashboardPage'
 import AnalyticsPage from '../features/analytics/AnalyticsPage'
 import UsersPage from '../features/users/UsersPage'
@@ -30,11 +32,23 @@ const router = createBrowserRouter([
       },
       {
         path: 'users',
-        element: <UsersPage />,
+        element: (
+          <RoleGuard allowedRoles={['admin', 'manager']}>
+            <UsersPage />
+          </RoleGuard>
+        ),
       },
       {
         path: 'settings',
-        element: <SettingsPage />,
+        element: (
+          <RoleGuard allowedRoles={['admin']}>
+            <SettingsPage />
+          </RoleGuard>
+        ),
+      },
+      {
+        path: 'unauthorized',
+        element: <UnauthorizedPage />,
       },
     ],
   },

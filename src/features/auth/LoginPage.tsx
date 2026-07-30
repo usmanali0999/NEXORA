@@ -1,4 +1,5 @@
 import { Navigate, useNavigate } from 'react-router-dom'
+import toast from 'react-hot-toast'
 import { useAuthStore } from '../../store/auth.store'
 import type { UserRole } from '../../store/auth.store'
 
@@ -9,6 +10,7 @@ function LoginPage() {
 
   const handleLogin = (role: UserRole) => {
     login(role)
+    toast.success(`${role} session started`)
     navigate('/')
   }
 

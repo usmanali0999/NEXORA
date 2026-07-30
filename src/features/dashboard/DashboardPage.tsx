@@ -1,10 +1,8 @@
+import StatCard from '../../shared/ui/StatCard'
+import { useDashboardStats } from './useDashboardStats'
+
 function DashboardPage() {
-  const stats = [
-    { title: 'Revenue', value: '$128,430' },
-    { title: 'Active Users', value: '8,492' },
-    { title: 'Conversion Rate', value: '12.8%' },
-    { title: 'System Health', value: '99.94%' },
-  ]
+  const { data: stats = [], isLoading, isError } = useDashboardStats()
 
   return (
     <div className="space-y-6">
@@ -15,17 +13,22 @@ function DashboardPage() {
         </p>
       </div>
 
-      <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
-        {stats.map((item) => (
-          <div
-            key={item.title}
-            className="rounded-2xl border border-white/10 bg-zinc-900 p-5"
-          >
-            <p className="text-sm text-zinc-400">{item.title}</p>
-            <h3 className="mt-3 text-2xl font-bold">{item.value}</h3>
-          </div>
-        ))}
-      </div>
+      {isError ? (
+        <div className="rounded-2xl border border-red-500/20 bg-zinc-900 p-5 text-red-400">
+          Failed to load dashboard stats.
+        </div>
+      ) : (
+        <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+          {isLoading
+            ? Array.from({ length: 4 }).map((_, index) => (
+                <div
+                  key={index}
+                  className="h-32 animate-pulse rounded-2xl border border-white/10 bg-zinc-900"
+                />
+              ))
+            : stats.map((stat) => <StatCard key={stat.id} stat={stat} />)}
+        </div>
+      )}
 
       <div className="grid gap-5 xl:grid-cols-3">
         <div className="rounded-2xl border border-white/10 bg-zinc-900 p-6 xl:col-span-2">
