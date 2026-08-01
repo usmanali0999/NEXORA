@@ -5,3 +5,9 @@ export type DashboardStat = {
   change: string
   trend: 'up' | 'down' | 'stable'
 }
+
+export type RevenueTrendPoint = {
+  label: string
+  revenue: number
+  users: number
+}

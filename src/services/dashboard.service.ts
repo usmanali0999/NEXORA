@@ -1,4 +1,4 @@
-import type { DashboardStat } from '../types/dashboard'
+import type { DashboardStat, RevenueTrendPoint } from '../types/dashboard'
 
 const dashboardStatsMock: DashboardStat[] = [
   {
@@ -31,10 +31,27 @@ const dashboardStatsMock: DashboardStat[] = [
   },
 ]
 
+const revenueTrendMock: RevenueTrendPoint[] = [
+  { label: 'Jan', revenue: 18000, users: 4200 },
+  { label: 'Feb', revenue: 22000, users: 5100 },
+  { label: 'Mar', revenue: 26000, users: 5900 },
+  { label: 'Apr', revenue: 24000, users: 5600 },
+  { label: 'May', revenue: 31000, users: 7000 },
+  { label: 'Jun', revenue: 35400, users: 8492 },
+]
+
 export async function getDashboardStats(): Promise<DashboardStat[]> {
   return new Promise((resolve) => {
     setTimeout(() => {
       resolve(dashboardStatsMock)
     }, 800)
+  })
+}
+
+export async function getRevenueTrend(): Promise<RevenueTrendPoint[]> {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(revenueTrendMock)
+    }, 900)
   })
 }

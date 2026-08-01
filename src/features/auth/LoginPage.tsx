@@ -19,31 +19,49 @@ function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-950 px-4">
-      <div className="w-full max-w-md rounded-2xl border border-white/10 bg-zinc-900 p-8 shadow-2xl">
-        <h1 className="text-3xl font-bold text-white">NEXORA</h1>
-        <p className="mt-2 text-sm text-zinc-400">
+    <div
+      className="flex min-h-screen items-center justify-center px-4 transition-colors duration-200"
+      style={{ backgroundColor: 'var(--bg-primary)' }}
+    >
+      <div
+        className="w-full max-w-md rounded-2xl p-8 shadow-xl"
+        style={{
+          backgroundColor: 'var(--bg-card)',
+          border: '1px solid var(--border-primary)',
+        }}
+      >
+        <h1
+          className="text-3xl font-extrabold tracking-wider"
+          style={{ color: 'var(--text-primary)' }}
+        >
+          NEXORA
+        </h1>
+        <p className="mt-2 text-sm" style={{ color: 'var(--text-muted)' }}>
           Sign in to access the enterprise dashboard
         </p>
 
         <div className="mt-8 space-y-3">
           <button
             onClick={() => handleLogin('admin')}
-            className="w-full rounded-xl bg-white px-4 py-3 font-medium text-zinc-950 transition hover:opacity-90"
+            className="w-full rounded-xl px-4 py-3 font-medium transition hover:opacity-90"
+            style={{
+              backgroundColor: 'var(--accent)',
+              color: 'var(--accent-text)',
+            }}
           >
             Login as Admin
           </button>
 
           <button
             onClick={() => handleLogin('manager')}
-            className="w-full rounded-xl bg-blue-500 px-4 py-3 font-medium text-white transition hover:bg-blue-400"
+            className="w-full rounded-xl bg-blue-600 px-4 py-3 font-medium text-white transition hover:bg-blue-500"
           >
             Login as Manager
           </button>
 
           <button
             onClick={() => handleLogin('analyst')}
-            className="w-full rounded-xl bg-emerald-500 px-4 py-3 font-medium text-white transition hover:bg-emerald-400"
+            className="w-full rounded-xl bg-emerald-600 px-4 py-3 font-medium text-white transition hover:bg-emerald-500"
           >
             Login as Analyst
           </button>

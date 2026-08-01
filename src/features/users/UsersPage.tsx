@@ -28,8 +28,8 @@ const columns: DataTableColumn<UserRecord>[] = [
     header: 'Name',
     render: (row) => (
       <div>
-        <p className="font-medium text-white">{row.name}</p>
-        <p className="text-xs text-zinc-400">{row.email}</p>
+        <p className="font-medium" style={{ color: 'var(--text-primary)' }}>{row.name}</p>
+        <p className="text-xs" style={{ color: 'var(--text-muted)' }}>{row.email}</p>
       </div>
     ),
   },
@@ -37,7 +37,13 @@ const columns: DataTableColumn<UserRecord>[] = [
     key: 'role',
     header: 'Role',
     render: (row) => (
-      <span className="rounded-full bg-blue-500/15 px-2.5 py-1 text-xs font-medium text-blue-400">
+      <span
+        className="rounded-full px-2.5 py-1 text-xs font-medium"
+        style={{
+          backgroundColor: 'color-mix(in srgb, var(--info) 15%, transparent)',
+          color: 'var(--info)',
+        }}
+      >
         {row.role}
       </span>
     ),
@@ -46,28 +52,28 @@ const columns: DataTableColumn<UserRecord>[] = [
     key: 'status',
     header: 'Status',
     render: (row) => {
-      const styles =
+      const color =
         row.status === 'Active'
-          ? 'bg-emerald-500/15 text-emerald-400'
+          ? 'var(--success)'
           : row.status === 'Pending'
-            ? 'bg-amber-500/15 text-amber-400'
-            : 'bg-red-500/15 text-red-400'
+            ? 'var(--warning)'
+            : 'var(--danger)'
 
       return (
-        <span className={`rounded-full px-2.5 py-1 text-xs font-medium ${styles}`}>
+        <span
+          className="rounded-full px-2.5 py-1 text-xs font-medium"
+          style={{
+            backgroundColor: `color-mix(in srgb, ${color} 15%, transparent)`,
+            color,
+          }}
+        >
           {row.status}
         </span>
       )
     },
   },
-  {
-    key: 'department',
-    header: 'Department',
-  },
-  {
-    key: 'lastActive',
-    header: 'Last Active',
-  },
+  { key: 'department', header: 'Department' },
+  { key: 'lastActive', header: 'Last Active' },
 ]
 
 function UsersPage() {
@@ -118,9 +124,14 @@ function UsersPage() {
 
   return (
     <div className="space-y-6">
-      <div className="rounded-2xl border border-white/10 bg-zinc-900 p-6">
-        <h1 className="text-3xl font-bold">Users</h1>
-        <p className="mt-2 text-zinc-400">
+      <div
+        className="rounded-2xl p-6"
+        style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border-primary)' }}
+      >
+        <h1 className="text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>
+          Users
+        </h1>
+        <p className="mt-2" style={{ color: 'var(--text-muted)' }}>
           Team management, filtering, and role-based access overview.
         </p>
 
@@ -128,16 +139,24 @@ function UsersPage() {
           {summaryCards.map((card) => (
             <div
               key={card.label}
-              className="rounded-xl border border-white/10 bg-zinc-950 p-5"
+              className="rounded-xl p-5"
+              style={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-primary)' }}
             >
-              <p className="text-sm text-zinc-400">{card.label}</p>
-              <h3 className="mt-2 text-2xl font-bold text-white">{card.value}</h3>
+              <p className="text-sm" style={{ color: 'var(--text-muted)' }}>
+                {card.label}
+              </p>
+              <h3 className="mt-2 text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>
+                {card.value}
+              </h3>
             </div>
           ))}
         </div>
       </div>
 
-      <div className="rounded-2xl border border-white/10 bg-zinc-900 p-6">
+      <div
+        className="rounded-2xl p-6"
+        style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border-primary)' }}
+      >
         <div className="grid gap-4 lg:grid-cols-4">
           <div className="lg:col-span-2">
             <Input
@@ -161,14 +180,26 @@ function UsersPage() {
         </div>
 
         <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
-          <p className="text-sm text-zinc-400">
-            Showing <span className="font-medium text-white">{filteredUsers.length}</span> of{' '}
-            <span className="font-medium text-white">{data.length}</span> users
+          <p className="text-sm" style={{ color: 'var(--text-muted)' }}>
+            Showing{' '}
+            <span className="font-medium" style={{ color: 'var(--text-primary)' }}>
+              {filteredUsers.length}
+            </span>{' '}
+            of{' '}
+            <span className="font-medium" style={{ color: 'var(--text-primary)' }}>
+              {data.length}
+            </span>{' '}
+            users
           </p>
 
           <button
             onClick={handleClearFilters}
-            className="rounded-xl border border-white/10 bg-zinc-950 px-4 py-2 text-sm text-zinc-300 transition hover:bg-white/5 hover:text-white"
+            className="rounded-xl px-4 py-2 text-sm transition hover:opacity-80"
+            style={{
+              backgroundColor: 'var(--bg-secondary)',
+              color: 'var(--text-secondary)',
+              border: '1px solid var(--border-primary)',
+            }}
           >
             Clear Filters
           </button>
@@ -176,7 +207,10 @@ function UsersPage() {
 
         <div className="mt-6">
           {isError ? (
-            <div className="rounded-xl border border-red-500/20 bg-zinc-950 p-5 text-red-400">
+            <div
+              className="rounded-xl p-5"
+              style={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--danger)', color: 'var(--danger)' }}
+            >
               Failed to load users data.
             </div>
           ) : (
