@@ -2,101 +2,35 @@ import clsx from 'clsx'
 import { BellOff, X } from 'lucide-react'
 import type { NotificationItem } from '../../types/notification'
 
-type NotificationPanelProps = {
-  open: boolean
-  isLoading: boolean
-  notifications: NotificationItem[]
-  onClose: () => void
-}
-
-function NotificationPanel({
-  open,
-  isLoading,
-  notifications,
-  onClose,
-}: NotificationPanelProps) {
+function NotificationPanel({ open, isLoading, notifications, onClose }: { open: boolean; isLoading: boolean; notifications: NotificationItem[]; onClose: () => void }) {
   return (
     <>
-      <div
-        onClick={onClose}
-        className={clsx(
-          'fixed inset-0 z-40 bg-black/40 transition-opacity',
-          open ? 'opacity-100' : 'pointer-events-none opacity-0'
-        )}
-      />
-
-      <aside
-        className={clsx(
-          'fixed right-0 top-0 z-50 h-full w-full max-w-md border-l border-white/10 bg-zinc-950 shadow-2xl transition-transform duration-300',
-          open ? 'translate-x-0' : 'translate-x-full'
-        )}
-      >
-        <div className="flex items-center justify-between border-b border-white/10 p-5">
-          <div>
-            <h2 className="text-lg font-semibold text-white">Notifications</h2>
-            <p className="text-sm text-zinc-400">
-              Operational alerts and workspace activity
-            </p>
-          </div>
-
-          <button
-            onClick={onClose}
-            className="rounded-lg p-2 text-zinc-400 transition hover:bg-white/10 hover:text-white"
-          >
-            <X size={18} />
-          </button>
+      <div onClick={onClose} className={clsx('fixed inset-0 z-40 bg-black/60 transition-opacity', open ? 'opacity-100' : 'pointer-events-none opacity-0')} />
+      <aside className={clsx('fixed right-0 top-0 z-50 h-full w-full max-w-sm border-l border-[#1e1e1e] bg-[#09090b] shadow-2xl transition-transform duration-300', open ? 'translate-x-0' : 'translate-x-full')}>
+        <div className="flex items-center justify-between border-b border-[#1e1e1e] p-4">
+          <div><h2 className="text-sm font-semibold text-white">Notifications</h2><p className="text-[11px] text-neutral-500">Alerts & activity</p></div>
+          <button onClick={onClose} className="rounded-lg p-1.5 text-neutral-500 hover:bg-[#1a1a1a] hover:text-white transition"><X size={16} /></button>
         </div>
 
-        <div className="h-[calc(100%-81px)] overflow-y-auto p-4">
+        <div className="h-[calc(100%-65px)] overflow-y-auto p-3">
           {isLoading ? (
-            <div className="space-y-3">
-              {Array.from({ length: 4 }).map((_, index) => (
-                <div
-                  key={index}
-                  className="h-24 animate-pulse rounded-2xl border border-white/10 bg-zinc-900"
-                />
-              ))}
-            </div>
+            <div className="space-y-2">{Array.from({ length: 4 }).map((_, i) => <div key={i} className="h-20 animate-pulse rounded-xl border border-[#1e1e1e] bg-[#111]" />)}</div>
           ) : notifications.length === 0 ? (
-            <div className="flex h-full flex-col items-center justify-center rounded-2xl border border-dashed border-white/10 text-center">
-              <BellOff size={28} className="text-zinc-500" />
-              <p className="mt-3 text-sm text-zinc-400">No notifications available.</p>
-            </div>
+            <div className="flex h-full flex-col items-center justify-center text-center"><BellOff size={24} className="text-neutral-600" /><p className="mt-2 text-xs text-neutral-500">No notifications.</p></div>
           ) : (
-            <div className="space-y-3">
-              {notifications.map((item) => {
-                const badgeColor =
-                  item.severity === 'success'
-                    ? 'bg-emerald-500/15 text-emerald-400'
-                    : item.severity === 'warning'
-                      ? 'bg-amber-500/15 text-amber-400'
-                      : 'bg-blue-500/15 text-blue-400'
-
+            <div className="space-y-2">
+              {notifications.map((n) => {
+                const bc = n.severity === 'success' ? 'bg-emerald-500/10 text-emerald-400' : n.severity === 'warning' ? 'bg-amber-500/10 text-amber-400' : 'bg-blue-500/10 text-blue-400'
                 return (
-                  <div
-                    key={item.id}
-                    className="rounded-2xl border border-white/10 bg-zinc-900 p-4"
-                  >
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="min-w-0">
-                        <div className="flex items-center gap-2">
-                          <h3 className="font-medium text-white">{item.title}</h3>
-                          {item.unread && (
-                            <span className="h-2 w-2 rounded-full bg-white" />
-                          )}
-                        </div>
-
-                        <p className="mt-2 text-sm text-zinc-400">
-                          {item.message}
-                        </p>
-
-                        <div className="mt-3 flex items-center gap-2">
-                          <span className={clsx('rounded-full px-2.5 py-1 text-xs font-medium', badgeColor)}>
-                            {item.severity}
-                          </span>
-                          <span className="text-xs text-zinc-500">{item.timestamp}</span>
-                        </div>
-                      </div>
+                  <div key={n.id} className="rounded-xl border border-[#1e1e1e] bg-[#111] p-3">
+                    <div className="flex items-center gap-1.5">
+                      <h3 className="text-xs font-medium text-white">{n.title}</h3>
+                      {n.unread && <span className="h-1.5 w-1.5 rounded-full bg-white" />}
+                    </div>
+                    <p className="mt-1.5 text-[11px] text-neutral-500">{n.message}</p>
+                    <div className="mt-2 flex items-center gap-2">
+                      <span className={clsx('rounded-full px-2 py-0.5 text-[10px] font-medium', bc)}>{n.severity}</span>
+                      <span className="text-[10px] text-neutral-600">{n.timestamp}</span>
                     </div>
                   </div>
                 )

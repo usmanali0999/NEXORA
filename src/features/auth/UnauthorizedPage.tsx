@@ -2,30 +2,10 @@ import { Link } from 'react-router-dom'
 
 function UnauthorizedPage() {
   return (
-    <div
-      className="rounded-2xl p-8"
-      style={{
-        backgroundColor: 'var(--bg-card)',
-        border: '1px solid var(--danger)',
-      }}
-    >
-      <h1 className="text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>
-        Access Denied
-      </h1>
-      <p className="mt-3" style={{ color: 'var(--text-muted)' }}>
-        You do not have permission to access this section.
-      </p>
-
-      <Link
-        to="/"
-        className="mt-6 inline-flex rounded-xl px-4 py-3 text-sm font-medium transition hover:opacity-90"
-        style={{
-          backgroundColor: 'var(--accent)',
-          color: 'var(--accent-text)',
-        }}
-      >
-        Back to Dashboard
-      </Link>
+    <div className="rounded-xl border border-red-500/20 bg-[#111] p-8">
+      <h1 className="text-2xl font-bold text-white">Access Denied</h1>
+      <p className="mt-2 text-sm text-neutral-500">You don't have permission to view this page.</p>
+      <Link to="/" className="mt-5 inline-flex rounded-lg bg-white px-4 py-2.5 text-sm font-medium text-black transition hover:bg-neutral-200">Back to Dashboard</Link>
     </div>
   )
 }

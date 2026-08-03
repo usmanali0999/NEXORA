@@ -1,124 +1,67 @@
-import {
-  Area,
-  AreaChart,
-  CartesianGrid,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from 'recharts'
+import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import StatCard from '../../shared/ui/StatCard'
 import { useDashboardStats } from './useDashboardStats'
 import { useRevenueTrend } from './useRevenueTrend'
 
 function DashboardPage() {
-  const { data: stats = [], isLoading: statsLoading, isError: statsError } = useDashboardStats()
-  const { data: trendData = [], isLoading: trendLoading, isError: trendError } = useRevenueTrend()
+  const { data: stats = [], isLoading: sl, isError: se } = useDashboardStats()
+  const { data: trend = [], isLoading: tl, isError: te } = useRevenueTrend()
 
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>
-          Dashboard Overview
-        </h1>
-        <p className="mt-2" style={{ color: 'var(--text-muted)' }}>
-          Monitor enterprise performance, growth, and infrastructure metrics.
-        </p>
+        <h1 className="text-2xl font-bold text-white">Dashboard Overview</h1>
+        <p className="mt-1 text-sm text-neutral-500">Real-time enterprise metrics and activity.</p>
       </div>
 
-      {statsError ? (
-        <div
-          className="rounded-2xl p-5"
-          style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--danger)', color: 'var(--danger)' }}
-        >
-          Failed to load dashboard stats.
-        </div>
+      {se ? (
+        <div className="rounded-xl border border-red-500/20 bg-[#111] p-4 text-sm text-red-400">Failed to load stats.</div>
       ) : (
-        <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
-          {statsLoading
-            ? Array.from({ length: 4 }).map((_, index) => (
-                <div
-                  key={index}
-                  className="h-32 animate-pulse rounded-2xl"
-                  style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border-primary)' }}
-                />
-              ))
-            : stats.map((stat) => <StatCard key={stat.id} stat={stat} />)}
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          {sl
+            ? Array.from({ length: 4 }).map((_, i) => <div key={i} className="h-28 animate-pulse rounded-xl border border-[#1e1e1e] bg-[#111]" />)
+            : stats.map((s) => <StatCard key={s.id} stat={s} />)}
         </div>
       )}
 
-      <div className="grid gap-5 xl:grid-cols-3">
-        <div
-          className="rounded-2xl p-6 xl:col-span-2"
-          style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border-primary)' }}
-        >
-          <h3 className="text-lg font-semibold" style={{ color: 'var(--text-primary)' }}>
-            Revenue Trend
-          </h3>
-          <p className="mt-1 text-sm" style={{ color: 'var(--text-muted)' }}>
-            Monthly revenue movement across recent periods.
-          </p>
+      <div className="grid gap-4 xl:grid-cols-3">
+        <div className="rounded-xl border border-[#1e1e1e] bg-[#111] p-5 xl:col-span-2">
+          <h3 className="text-sm font-semibold text-white">Revenue Trend</h3>
+          <p className="mt-0.5 text-xs text-neutral-600">Monthly performance across recent periods.</p>
 
-          <div className="mt-6 h-80">
-            {trendError ? (
-              <div
-                className="flex h-full items-center justify-center rounded-xl"
-                style={{ backgroundColor: 'var(--bg-secondary)', color: 'var(--danger)' }}
-              >
-                Failed to load chart data.
-              </div>
-            ) : trendLoading ? (
-              <div
-                className="h-full animate-pulse rounded-xl"
-                style={{ backgroundColor: 'var(--bg-secondary)' }}
-              />
+          <div className="mt-5 h-72">
+            {te ? (
+              <div className="flex h-full items-center justify-center rounded-lg bg-[#0a0a0a] text-sm text-red-400">Chart error.</div>
+            ) : tl ? (
+              <div className="h-full animate-pulse rounded-lg bg-[#0a0a0a]" />
             ) : (
               <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={trendData}>
+                <AreaChart data={trend}>
                   <defs>
-                    <linearGradient id="revenueFill" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="var(--accent)" stopOpacity={0.3} />
-                      <stop offset="95%" stopColor="var(--accent)" stopOpacity={0.02} />
+                    <linearGradient id="rf" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#fff" stopOpacity={0.15} />
+                      <stop offset="95%" stopColor="#fff" stopOpacity={0} />
                     </linearGradient>
                   </defs>
-
-                  <CartesianGrid strokeDasharray="3 3" stroke="var(--border-primary)" />
-                  <XAxis dataKey="label" stroke="var(--text-muted)" tickLine={false} axisLine={false} />
-                  <YAxis stroke="var(--text-muted)" tickLine={false} axisLine={false} />
-                  <Tooltip
-                    contentStyle={{
-                      background: 'var(--bg-card)',
-                      border: '1px solid var(--border-primary)',
-                      borderRadius: '12px',
-                      color: 'var(--text-primary)',
-                    }}
-                  />
-                  <Area
-                    type="monotone"
-                    dataKey="revenue"
-                    stroke="var(--accent)"
-                    fill="url(#revenueFill)"
-                    strokeWidth={3}
-                  />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#1e1e1e" />
+                  <XAxis dataKey="label" stroke="#525252" tickLine={false} axisLine={false} fontSize={12} />
+                  <YAxis stroke="#525252" tickLine={false} axisLine={false} fontSize={12} />
+                  <Tooltip contentStyle={{ background: '#111', border: '1px solid #1e1e1e', borderRadius: '10px', color: '#fff', fontSize: '12px' }} />
+                  <Area type="monotone" dataKey="revenue" stroke="#fff" fill="url(#rf)" strokeWidth={2} />
                 </AreaChart>
               </ResponsiveContainer>
             )}
           </div>
         </div>
 
-        <div
-          className="rounded-2xl p-6"
-          style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border-primary)' }}
-        >
-          <h3 className="text-lg font-semibold" style={{ color: 'var(--text-primary)' }}>
-            Recent Activity
-          </h3>
-          <ul className="mt-6 space-y-4 text-sm" style={{ color: 'var(--text-secondary)' }}>
-            <li>New enterprise client onboarded</li>
-            <li>Quarterly analytics synced successfully</li>
-            <li>Permissions updated for finance team</li>
-            <li>Infrastructure report generated</li>
-            <li>Role-based access rules reviewed</li>
+        <div className="rounded-xl border border-[#1e1e1e] bg-[#111] p-5">
+          <h3 className="text-sm font-semibold text-white">Recent Activity</h3>
+          <ul className="mt-4 space-y-3 text-xs text-neutral-400">
+            <li>• New enterprise client onboarded</li>
+            <li>• Quarterly analytics synced</li>
+            <li>• Finance team permissions updated</li>
+            <li>• Infrastructure report generated</li>
+            <li>• Access rules reviewed</li>
           </ul>
         </div>
       </div>

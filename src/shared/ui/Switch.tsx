@@ -1,28 +1,9 @@
 import clsx from 'clsx'
 
-type SwitchProps = {
-  checked: boolean
-  onChange: (checked: boolean) => void
-}
-
-function Switch({ checked, onChange }: SwitchProps) {
+function Switch({ checked, onChange }: { checked: boolean; onChange: (v: boolean) => void }) {
   return (
-    <button
-      type="button"
-      role="switch"
-      aria-checked={checked}
-      onClick={() => onChange(!checked)}
-      className={clsx(
-        'relative inline-flex h-7 w-12 items-center rounded-full transition',
-        checked ? 'bg-white' : 'bg-zinc-700'
-      )}
-    >
-      <span
-        className={clsx(
-          'inline-block h-5 w-5 transform rounded-full bg-zinc-950 transition',
-          checked ? 'translate-x-6' : 'translate-x-1'
-        )}
-      />
+    <button type="button" role="switch" aria-checked={checked} onClick={() => onChange(!checked)} className={clsx('relative inline-flex h-6 w-10 items-center rounded-full transition', checked ? 'bg-white' : 'bg-neutral-700')}>
+      <span className={clsx('inline-block h-4 w-4 rounded-full bg-[#09090b] transition', checked ? 'translate-x-5' : 'translate-x-1')} />
     </button>
   )
 }

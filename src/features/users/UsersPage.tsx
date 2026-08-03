@@ -8,220 +8,66 @@ import type { UserRecord, UserStatus } from '../../types/user'
 type RoleFilter = 'all' | UserRecord['role']
 type StatusFilter = 'all' | UserStatus
 
-const roleOptions = [
-  { label: 'All Roles', value: 'all' },
-  { label: 'Admin', value: 'Admin' },
-  { label: 'Manager', value: 'Manager' },
-  { label: 'Analyst', value: 'Analyst' },
-]
-
-const statusOptions = [
-  { label: 'All Statuses', value: 'all' },
-  { label: 'Active', value: 'Active' },
-  { label: 'Pending', value: 'Pending' },
-  { label: 'Suspended', value: 'Suspended' },
-]
+const roleOpts = [{ label: 'All Roles', value: 'all' }, { label: 'Admin', value: 'Admin' }, { label: 'Manager', value: 'Manager' }, { label: 'Analyst', value: 'Analyst' }]
+const statusOpts = [{ label: 'All Statuses', value: 'all' }, { label: 'Active', value: 'Active' }, { label: 'Pending', value: 'Pending' }, { label: 'Suspended', value: 'Suspended' }]
 
 const columns: DataTableColumn<UserRecord>[] = [
-  {
-    key: 'name',
-    header: 'Name',
-    render: (row) => (
-      <div>
-        <p className="font-medium" style={{ color: 'var(--text-primary)' }}>{row.name}</p>
-        <p className="text-xs" style={{ color: 'var(--text-muted)' }}>{row.email}</p>
-      </div>
-    ),
-  },
-  {
-    key: 'role',
-    header: 'Role',
-    render: (row) => (
-      <span
-        className="rounded-full px-2.5 py-1 text-xs font-medium"
-        style={{
-          backgroundColor: 'color-mix(in srgb, var(--info) 15%, transparent)',
-          color: 'var(--info)',
-        }}
-      >
-        {row.role}
-      </span>
-    ),
-  },
-  {
-    key: 'status',
-    header: 'Status',
-    render: (row) => {
-      const color =
-        row.status === 'Active'
-          ? 'var(--success)'
-          : row.status === 'Pending'
-            ? 'var(--warning)'
-            : 'var(--danger)'
-
-      return (
-        <span
-          className="rounded-full px-2.5 py-1 text-xs font-medium"
-          style={{
-            backgroundColor: `color-mix(in srgb, ${color} 15%, transparent)`,
-            color,
-          }}
-        >
-          {row.status}
-        </span>
-      )
-    },
-  },
-  { key: 'department', header: 'Department' },
+  { key: 'name', header: 'Name', render: (r) => (<div><p className="font-medium text-white">{r.name}</p><p className="text-[11px] text-neutral-500">{r.email}</p></div>) },
+  { key: 'role', header: 'Role', render: (r) => <span className="rounded-full bg-blue-500/10 px-2 py-0.5 text-[11px] font-medium text-blue-400">{r.role}</span> },
+  { key: 'status', header: 'Status', render: (r) => { const c = r.status === 'Active' ? 'bg-emerald-500/10 text-emerald-400' : r.status === 'Pending' ? 'bg-amber-500/10 text-amber-400' : 'bg-red-500/10 text-red-400'; return <span className={`rounded-full px-2 py-0.5 text-[11px] font-medium ${c}`}>{r.status}</span> } },
+  { key: 'department', header: 'Dept' },
   { key: 'lastActive', header: 'Last Active' },
 ]
 
 function UsersPage() {
   const { data = [], isLoading, isError } = useUsers()
-
   const [search, setSearch] = useState('')
-  const [roleFilter, setRoleFilter] = useState<RoleFilter>('all')
-  const [statusFilter, setStatusFilter] = useState<StatusFilter>('all')
+  const [role, setRole] = useState<RoleFilter>('all')
+  const [status, setStatus] = useState<StatusFilter>('all')
 
-  const summary = useMemo(() => {
-    return {
-      total: data.length,
-      active: data.filter((user) => user.status === 'Active').length,
-      pending: data.filter((user) => user.status === 'Pending').length,
-      suspended: data.filter((user) => user.status === 'Suspended').length,
-    }
-  }, [data])
+  const summary = useMemo(() => ({ total: data.length, active: data.filter((u) => u.status === 'Active').length, pending: data.filter((u) => u.status === 'Pending').length, suspended: data.filter((u) => u.status === 'Suspended').length }), [data])
 
-  const filteredUsers = useMemo(() => {
-    const term = search.trim().toLowerCase()
-
-    return data.filter((user) => {
-      const matchesSearch =
-        !term ||
-        user.name.toLowerCase().includes(term) ||
-        user.email.toLowerCase().includes(term) ||
-        user.department.toLowerCase().includes(term)
-
-      const matchesRole = roleFilter === 'all' || user.role === roleFilter
-      const matchesStatus = statusFilter === 'all' || user.status === statusFilter
-
-      return matchesSearch && matchesRole && matchesStatus
+  const filtered = useMemo(() => {
+    const t = search.trim().toLowerCase()
+    return data.filter((u) => {
+      const ms = !t || u.name.toLowerCase().includes(t) || u.email.toLowerCase().includes(t) || u.department.toLowerCase().includes(t)
+      const mr = role === 'all' || u.role === role
+      const mt = status === 'all' || u.status === status
+      return ms && mr && mt
     })
-  }, [data, search, roleFilter, statusFilter])
+  }, [data, search, role, status])
 
-  const handleClearFilters = () => {
-    setSearch('')
-    setRoleFilter('all')
-    setStatusFilter('all')
-  }
-
-  const summaryCards = [
-    { label: 'Total Users', value: summary.total },
-    { label: 'Active', value: summary.active },
-    { label: 'Pending', value: summary.pending },
-    { label: 'Suspended', value: summary.suspended },
-  ]
+  const cards = [{ l: 'Total', v: summary.total }, { l: 'Active', v: summary.active }, { l: 'Pending', v: summary.pending }, { l: 'Suspended', v: summary.suspended }]
 
   return (
     <div className="space-y-6">
-      <div
-        className="rounded-2xl p-6"
-        style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border-primary)' }}
-      >
-        <h1 className="text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>
-          Users
-        </h1>
-        <p className="mt-2" style={{ color: 'var(--text-muted)' }}>
-          Team management, filtering, and role-based access overview.
-        </p>
-
-        <div className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-          {summaryCards.map((card) => (
-            <div
-              key={card.label}
-              className="rounded-xl p-5"
-              style={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-primary)' }}
-            >
-              <p className="text-sm" style={{ color: 'var(--text-muted)' }}>
-                {card.label}
-              </p>
-              <h3 className="mt-2 text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>
-                {card.value}
-              </h3>
+      <div className="rounded-xl border border-[#1e1e1e] bg-[#111] p-5">
+        <h1 className="text-2xl font-bold text-white">Users</h1>
+        <p className="mt-1 text-sm text-neutral-500">Team management and role-based access.</p>
+        <div className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+          {cards.map((c) => (
+            <div key={c.l} className="rounded-lg border border-[#1e1e1e] bg-[#0a0a0a] p-4">
+              <p className="text-xs text-neutral-500">{c.l}</p>
+              <h3 className="mt-1.5 text-xl font-bold text-white">{c.v}</h3>
             </div>
           ))}
         </div>
       </div>
 
-      <div
-        className="rounded-2xl p-6"
-        style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border-primary)' }}
-      >
-        <div className="grid gap-4 lg:grid-cols-4">
-          <div className="lg:col-span-2">
-            <Input
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search by name, email, or department..."
-            />
-          </div>
-
-          <Select
-            value={roleFilter}
-            onChange={(e) => setRoleFilter(e.target.value as RoleFilter)}
-            options={roleOptions}
-          />
-
-          <Select
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value as StatusFilter)}
-            options={statusOptions}
-          />
+      <div className="rounded-xl border border-[#1e1e1e] bg-[#111] p-5">
+        <div className="grid gap-3 lg:grid-cols-4">
+          <div className="lg:col-span-2"><Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search name, email, dept..." /></div>
+          <Select value={role} onChange={(e) => setRole(e.target.value as RoleFilter)} options={roleOpts} />
+          <Select value={status} onChange={(e) => setStatus(e.target.value as StatusFilter)} options={statusOpts} />
         </div>
 
-        <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
-          <p className="text-sm" style={{ color: 'var(--text-muted)' }}>
-            Showing{' '}
-            <span className="font-medium" style={{ color: 'var(--text-primary)' }}>
-              {filteredUsers.length}
-            </span>{' '}
-            of{' '}
-            <span className="font-medium" style={{ color: 'var(--text-primary)' }}>
-              {data.length}
-            </span>{' '}
-            users
-          </p>
-
-          <button
-            onClick={handleClearFilters}
-            className="rounded-xl px-4 py-2 text-sm transition hover:opacity-80"
-            style={{
-              backgroundColor: 'var(--bg-secondary)',
-              color: 'var(--text-secondary)',
-              border: '1px solid var(--border-primary)',
-            }}
-          >
-            Clear Filters
-          </button>
+        <div className="mt-3 flex items-center justify-between">
+          <p className="text-xs text-neutral-500">Showing <span className="text-white">{filtered.length}</span> of <span className="text-white">{data.length}</span></p>
+          <button onClick={() => { setSearch(''); setRole('all'); setStatus('all') }} className="rounded-lg border border-[#1e1e1e] bg-[#0a0a0a] px-3 py-1.5 text-xs text-neutral-400 hover:bg-[#1a1a1a] hover:text-white transition">Clear</button>
         </div>
 
-        <div className="mt-6">
-          {isError ? (
-            <div
-              className="rounded-xl p-5"
-              style={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--danger)', color: 'var(--danger)' }}
-            >
-              Failed to load users data.
-            </div>
-          ) : (
-            <DataTable
-              columns={columns}
-              data={filteredUsers}
-              isLoading={isLoading}
-              getRowKey={(row) => row.id}
-              emptyMessage="No users match the current filters."
-            />
-          )}
+        <div className="mt-4">
+          {isError ? <div className="rounded-lg border border-red-500/20 bg-[#0a0a0a] p-4 text-sm text-red-400">Failed to load users.</div> : <DataTable columns={columns} data={filtered} isLoading={isLoading} getRowKey={(r) => r.id} emptyMessage="No users match filters." />}
         </div>
       </div>
     </div>
